@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Does a Satellite Solve Your Problem? — EO Infrastructure Assessment</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+    background: #080F1A;
+    color: #F1F5F9;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+  input[type=range] { accent-color: #F59E0B; cursor: pointer; width: 100%; }
+  button { font-family: inherit; }
+  .tab-btn {
+    padding: 8px 18px; border-radius: 8px 8px 0 0; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 500; transition: all 0.15s ease;
+    border-bottom: 2px solid transparent; background: transparent; color: #64748B;
+  }
+  .tab-btn.active { background: rgba(245,158,11,0.15); color: #F59E0B; border-bottom-color: #F59E0B; }
+  .card {
+    padding: 18px; border-radius: 10px; margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02);
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .card:hover { background: rgba(255,255,255,0.04); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid2sm { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .section-label { color: #94A3B8; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; }
+  .stat-box { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 18px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.06); }
+  .outcome-badge { border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
+  @media (max-width: 640px) {
+    .grid2, .grid2sm { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:28px 32px 0;background:linear-gradient(180deg,rgba(245,158,11,0.05) 0%,transparent 100%)">
+  <div style="max-width:860px;margin:0 auto">
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px">
+      <div style="width:42px;height:42px;border-radius:10px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⬡</div>
+      <div>
+        <div style="color:#F59E0B;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:5px">Earth Observation Infrastructure Assessment</div>
+        <h1 style="font-size:22px;font-weight:700;color:#F8FAFC;line-height:1.2;margin-bottom:6px">Does a Satellite Solve Your Problem?</h1>
+        <p style="color:#64748B;font-size:13px;line-height:1.6;max-width:520px">A practitioner's framework for assessing whether Earth observation data addresses a social monitoring need — and whether the investment is proportionate.</p>
+        <p style="color:#334155;font-size:11px;margin-top:8px">Working paper, 2025 · Fermi estimates are illustrative — label yours accordingly</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px" id="tabs">
+      <button class="tab-btn active" onclick="showTab('framework',this)">Framework</button>
+      <button class="tab-btn" onclick="showTab('estimator',this)">Fermi Estimator</button>
+      <button class="tab-btn" onclick="showTab('cases',this)">Case Studies</button>
+      <button class="tab-btn" onclick="showTab('satellite',this)">Satellite Primer</button>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:860px;margin:0 auto;padding:32px">
+
+<!-- FRAMEWORK TAB -->
+<div id="tab-framework">
+  <div class="grid2">
+    <div>
+      <div class="section-label">The Five Steps</div>
+      <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);border-radius:10px;padding:14px 16px;margin-bottom:18px">
+        <div style="color:#F59E0B;font-size:12px;font-weight:600;margin-bottom:4px">Key insight</div>
+        <div style="color:#CBD5E1;font-size:13px;line-height:1.6">Don't ask "what data do you need?" Ask "what decision are you making, and when?" People can't specify satellite parameters — but they can describe the choice in front of them. Work backwards from the decision to the data requirement.</div>
+      </div>
+      <div id="steps"></div>
+    </div>
+    <div>
+      <div class="section-label">Four Possible Outcomes</div>
+      <div style="color:#475569;font-size:13px;line-height:1.6;margin-bottom:18px">The framework doesn't always recommend a new satellite. These are the four typed outputs the gap analysis can produce.</div>
+      <div id="outcomes-fw"></div>
+      <div style="margin-top:20px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06)">
+        <div style="color:#64748B;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Public vs. Paid Data</div>
+        <div style="color:#94A3B8;font-size:12px;line-height:1.6">Gap analysis should be conducted first against <span style="color:#10B981">publicly accessible data</span> (Landsat, Sentinel, MODIS, PACE). If the gap can be closed with free data plus better intermediaries, that is the answer. Recommending paid commercial data (Planet Labs, Maxar) without flagging access equity implications is an error.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ESTIMATOR TAB -->
+<div id="tab-estimator" style="display:none">
+  <div class="section-label">Fermi Estimator — Step 5: Proportionality Assessment</div>
+  <p style="color:#64748B;font-size:13px;line-height:1.6;margin-bottom:24px;max-width:580px">Adjust the sliders to estimate whether the economic case for improved monitoring justifies the investment. This is a back-of-envelope tool — label your estimates as such. The goal is to determine which intervention tier is proportionate, not to produce a precise figure.</p>
+  <div id="case-banner" style="display:none;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:12px 16px;margin-bottom:20px;align-items:center;gap:10px">
+    <span style="color:#6366F1">◈</span>
+    <span id="case-label" style="color:#A5B4FC;font-size:13px;flex:1"></span>
+    <button onclick="clearCase()" style="background:transparent;border:none;color:#475569;cursor:pointer;font-size:13px">✕ Clear</button>
+  </div>
+  <div class="grid2">
+    <div>
+      <div class="section-label">Inputs</div>
+      <div id="sliders"></div>
+    </div>
+    <div>
+      <div class="section-label">Estimated Impact</div>
+      <div class="stat-box">
+        <div style="color:#64748B;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Expected annual loss from monitoring gap</div>
+        <div id="annual-loss" class="mono" style="color:#F1F5F9;font-size:30px;font-weight:700"></div>
+        <div style="color:#64748B;font-size:12px;margin-top:4px">per year</div>
+      </div>
+      <div id="prevent-box" class="stat-box"></div>
+      <div id="outcome-box" class="outcome-badge"></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <div class="section-label">Intervention Cost Tiers vs. Preventable Loss</div>
+    <div id="chart-container" style="margin-bottom:8px"></div>
+    <div style="color:#475569;font-size:11px;text-align:center;margin-top:6px">Bars show midpoint of cost range. The amber marker shows estimated annual preventable loss. Tiers whose cost exceeds the marker are likely not proportionate.</div>
+  </div>
+  <div style="margin-top:20px;background:rgba(255,255,255,0.02);border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.06)">
+    <div style="color:#64748B;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Intervention Tiers</div>
+    <div class="grid2sm" id="tier-legend"></div>
+  </div>
+</div>
+
+<!-- CASES TAB -->
+<div id="tab-cases" style="display:none">
+  <div class="section-label">Case Studies</div>
+  <p style="color:#64748B;font-size:13px;line-height:1.6;margin-bottom:24px;max-width:580px">These two cases apply the framework to different hazard contexts. Load either into the Fermi Estimator to explore the proportionality assessment interactively.</p>
+  <div class="grid2" style="margin-bottom:28px" id="case-cards"></div>
+  <div style="padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">
+    <div style="color:#64748B;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px">Key contrast between cases</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px" id="contrast-grid"></div>
+  </div>
+</div>
+
+<!-- SATELLITE PRIMER TAB -->
+<div id="tab-satellite" style="display:none">
+  <div class="section-label">Satellite Literacy for Practitioners</div>
+  <p style="color:#64748B;font-size:13px;line-height:1.6;margin-bottom:24px;max-width:580px">You don't need to be a remote sensing engineer to assess whether a satellite can help. But you do need to understand the parameters that determine whether existing data fits your problem.</p>
+  <div class="grid2sm" style="margin-bottom:28px" id="primer-cards"></div>
+  <div style="padding:20px;border-radius:12px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2)">
+    <div style="color:#F59E0B;font-size:13px;font-weight:700;margin-bottom:12px">The practitioner's decision tree</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px" id="decision-tree"></div>
+  </div>
+</div>
+
+</div><!-- end wrapper -->
+
+<script>
+const STEPS = [
+  { num:"01", title:"Decision Mapping", sub:"Not 'what data do you need?' — but 'what decision are you making?'", detail:"Identify who makes the critical decision, when it must be made, what the consequences of error are, and what information would change the outcome. Work backwards from the decision to the data requirement.", color:"#F59E0B" },
+  { num:"02", title:"Satellite Inventory", sub:"Map available EO data against operational parameters", detail:"Catalog relevant satellites by resolution, revisit frequency, spectral bands, data processing level, and latency. Distinguish publicly accessible data (Landsat, Sentinel, MODIS) from commercially gated data (Planet Labs, Maxar).", color:"#10B981" },
+  { num:"03", title:"Alternatives Assessment", sub:"Satellites are not always the right answer", detail:"Inventory non-satellite options: drones for high-resolution localized sensing, in-situ sensors for continuous point data, citizen science networks, and existing institutional data flows. Some problems are better solved by cheaper, ground-based approaches.", color:"#6366F1" },
+  { num:"04", title:"Gap Analysis", sub:"Name the gap type — temporal, spatial, capability, or institutional", detail:"Compare stakeholder decision needs against both satellite and non-satellite options. Classify gaps: temporal (too infrequent), spatial (too coarse), capability (data cannot detect what is needed), or institutional (data exists but no intermediary translates it into action).", color:"#EC4899" },
+  { num:"05", title:"Proportionality Assessment", sub:"Is closing the gap worth the investment?", detail:"Estimate annual expected losses attributable to the monitoring gap. Compare against intervention costs across tiers. Some gaps are real but not worth closing with a satellite. The answer may be a better institution, not a better satellite.", color:"#F59E0B" }
+];
+
+const OUTCOMES = [
+  { label:"Close the technical gap", desc:"New infrastructure justified. Economic case is clear, gap is real, existing data insufficient.", color:"#10B981", ex:"Camp Fire / FireSat" },
+  { label:"Close the institutional gap", desc:"Data exists. The missing piece is an intermediary to translate it into action. Much cheaper than a new satellite.", color:"#6366F1", ex:"Ecuador HABs / ESPOL" },
+  { label:"No gap", desc:"Existing public data is sufficient for the decision at hand, possibly with better processing or access.", color:"#94A3B8", ex:"Drought / Landsat archive" },
+  { label:"Gap not worth closing", desc:"A monitoring gap exists but economic stakes don't justify the investment. Alternative interventions may be more effective.", color:"#F59E0B", ex:"Many local resource management cases" }
+];
+
+const TIERS = [
+  { name:"Institutional fix", short:"Institution", desc:"Better use of existing free data + intermediary org", lo:0.2, hi:2, color:"#6366F1" },
+  { name:"Drone program", short:"Drones", desc:"Regular UAV monitoring for localized high-res sensing", lo:0.5, hi:5, color:"#10B981" },
+  { name:"Commercial satellite", short:"Commercial", desc:"Planet Labs / Maxar subscription for a defined area", lo:0.05, hi:2, color:"#F59E0B" },
+  { name:"New constellation", short:"Constellation", desc:"Purpose-built satellite system (e.g. FireSat model)", lo:40, hi:400, color:"#EC4899" }
+];
+
+const CASES = [
+  { name:"Camp Fire, California (2018)", hazard:"Wildfire", stake:16500, pct:100, freq:0.1, prev:25, outcome:0, notes:"Total economic losses ~$16.5B. FireSat constellation ($400M) justified by wildfire costs exceeding $20B/year across California. Gap: temporal — existing satellites missed the ignition window." },
+  { name:"HABs, Gulf of Guayaquil, Ecuador", hazard:"Harmful Algal Bloom", stake:5000, pct:7, freq:0.25, prev:30, outcome:1, notes:"Ecuador shrimp exports ~$5B/year. HAB events affect ~5–10% of production. Result: institutional gap — better use of Sentinel-2 + ESPOL as intermediary is proportionate; a new constellation is not." }
+];
+
+const PRIMER = [
+  { term:"Spatial resolution", plain:"How small an object can it see?", detail:"Landsat: 30m (a building). Sentinel-2: 10m (a large car). Planet: 3m (a person). MODIS: 250m–1km. Match to the scale of your hazard.", color:"#10B981" },
+  { term:"Revisit frequency", plain:"How often does it pass over the same spot?", detail:"MODIS: daily. Sentinel-2: 5 days at equator. Landsat-8: 16 days. GOES (geostationary): continuous. Match to how fast your hazard evolves.", color:"#6366F1" },
+  { term:"Spectral bands", plain:"What kind of light does it measure?", detail:"Visible: what you'd see with your eyes. Near-infrared: vegetation/fire. Thermal: temperature, night fire detection. UV: some algae species. You need the right band for your indicator.", color:"#F59E0B" },
+  { term:"Data latency", plain:"How long until you have usable data?", detail:"Ranges from minutes (GOES real-time) to a month (some Copernicus products). A satellite that's too slow for your decision is no better than no satellite.", color:"#EC4899" },
+  { term:"Data processing level", plain:"How much work is already done for you?", detail:"L1: raw data, needs a PhD. L2: atmosphere-corrected, usable by analysts. L4: ready-to-use derived products (e.g. chlorophyll concentration). Higher level = more accessible but potentially more latency.", color:"#10B981" },
+  { term:"CubeSat vs. large satellite", plain:"Small cheap flexible vs. large capable long-lived", detail:"CubeSats: 1–10kg, $1–10M, 2–5yr lifespan, limited sensors. Large satellites: $100M–$1B+, 10–15yr lifespan. Constellations of CubeSats can achieve high revisit frequency at moderate cost.", color:"#6366F1" },
+  { term:"Orbit type", plain:"Passes over briefly vs. watches continuously", detail:"LEO (300–2000km): high resolution but overhead for minutes only. GEO (36,000km): watches the same area continuously but lower resolution. GOES/Meteosat are geostationary. Landsat/Sentinel are LEO.", color:"#F59E0B" },
+  { term:"Free vs. paid data", plain:"Who can actually access it?", detail:"Free: Landsat (30m/16-day), Sentinel (10–300m/1–5 days), MODIS (daily), PACE (ocean color). Paid: Planet ($5K–$20K+/yr), Maxar (government pricing). The access equity gap matters — recommend paid data only when free options genuinely fail.", color:"#EC4899" }
+];
+
+const DECISION = [
+  ["1. What is your hazard's spatial scale?","<30m → commercial data or drones. 30m–1km → Landsat/Sentinel may work. >1km → MODIS sufficient."],
+  ["2. How fast does your hazard evolve?","Minutes–hours → geostationary. Days → MODIS/Sentinel-3. Weeks–months → Landsat archive is sufficient."],
+  ["3. What indicator do you need?","Define the physical/chemical property, then identify which spectral band detects it. If no public satellite band exists, that is your gap."],
+  ["4. Is free public data sufficient?","If yes: the problem is probably institutional. If no: commercial data has an access equity cost that must be flagged explicitly."]
+];
+
+const CONTRAST = [
+  ["Hazard type","Acute terrestrial","Slow-developing marine"],
+  ["Institutional context","Rich — CAL FIRE, FEMA, NASA RECOVER","Thin — ESPOL, no monitoring program"],
+  ["Primary gap","Temporal (detection latency)","Institutional (no intermediary)"],
+  ["Right intervention","New satellite constellation","Better use of existing free data"],
+  ["Key satellite need","Near-IR thermal, 80m, 20-min revisit","Chl-a, 10m, daily — partially available"]
+];
+
+let activeStep = -1;
+let estimVals = { stake:5000, pct:7, freq:0.25, prev:30 };
+
+function fmt(n) {
+  if (n >= 1000) return '$'+(n/1000).toFixed(1)+'B';
+  if (n >= 1) return '$'+n.toFixed(1)+'M';
+  return '$'+(n*1000).toFixed(0)+'K';
+}
+
+function showTab(id, btn) {
+  ['framework','estimator','cases','satellite'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===id ? 'block':'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id==='estimator') renderEstimator();
+}
+
+function buildSteps() {
+  const el = document.getElementById('steps');
+  STEPS.forEach((s,i) => {
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.id = 'step-'+i;
+    d.onclick = () => toggleStep(i);
+    d.innerHTML = `<div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="color:${s.color};font-family:monospace;font-size:11px;font-weight:700;margin-top:2px;min-width:20px">${s.num}</div>
+      <div style="flex:1">
+        <div style="color:#F1F5F9;font-weight:600;font-size:14px;margin-bottom:3px">${s.title}</div>
+        <div style="color:#94A3B8;font-size:12px;line-height:1.5">${s.sub}</div>
+        <div id="step-detail-${i}" style="display:none;color:#CBD5E1;font-size:12px;line-height:1.7;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08)">${s.detail}</div>
+      </div>
+      <div id="step-icon-${i}" style="color:rgba(255,255,255,0.2);font-size:16px;margin-top:2px">+</div>
+    </div>`;
+    el.appendChild(d);
+  });
+}
+
+function toggleStep(i) {
+  const open = activeStep === i;
+  if (activeStep >= 0) {
+    document.getElementById('step-'+activeStep).style.border = '1px solid rgba(255,255,255,0.08)';
+    document.getElementById('step-'+activeStep).style.background = 'rgba(255,255,255,0.02)';
+    document.getElementById('step-detail-'+activeStep).style.display='none';
+    document.getElementById('step-icon-'+activeStep).textContent = '+';
+    document.getElementById('step-icon-'+activeStep).style.color = 'rgba(255,255,255,0.2)';
+  }
+  activeStep = open ? -1 : i;
+  if (activeStep >= 0) {
+    const s = STEPS[activeStep];
+    document.getElementById('step-'+activeStep).style.border = `1px solid ${s.color}`;
+    document.getElementById('step-'+activeStep).style.background = s.color+'18';
+    document.getElementById('step-detail-'+activeStep).style.display='block';
+    document.getElementById('step-icon-'+activeStep).textContent = '−';
+    document.getElementById('step-icon-'+activeStep).style.color = s.color;
+  }
+}
+
+function buildOutcomes() {
+  const el = document.getElementById('outcomes-fw');
+  OUTCOMES.forEach(o => {
+    const d = document.createElement('div');
+    d.style.cssText = `padding:14px;border-radius:10px;margin-bottom:10px;border:1px solid ${o.color}30;background:${o.color}08`;
+    d.innerHTML = `<div style="display:flex;gap:10px;align-items:flex-start">
+      <div style="color:${o.color};font-weight:700;font-size:16px;line-height:1">→</div>
+      <div>
+        <div style="color:${o.color};font-weight:600;font-size:13px;margin-bottom:3px">${o.label}</div>
+        <div style="color:#94A3B8;font-size:12px;line-height:1.5;margin-bottom:4px">${o.desc}</div>
+        <div style="color:#475569;font-size:11px;font-style:italic">e.g. ${o.ex}</div>
+      </div>
+    </div>`;
+    el.appendChild(d);
+  });
+}
+
+function getOutcome(preventable) {
+  if (preventable >= TIERS[3].lo) return OUTCOMES[0];
+  if (preventable >= TIERS[0].lo) return OUTCOMES[1];
+  if (preventable >= 0.05) return OUTCOMES[3];
+  return OUTCOMES[2];
+}
+
+function renderEstimator() {
+  const { stake, pct, freq, prev } = estimVals;
+  const annualLoss = stake * pct/100 * freq;
+  const preventable = annualLoss * prev/100;
+  const outcome = getOutcome(preventable);
+
+  document.getElementById('annual-loss').textContent = fmt(annualLoss)+'/yr';
+
+  const pb = document.getElementById('prevent-box');
+  pb.style.borderColor = outcome.color+'40';
+  pb.style.background = outcome.color+'10';
+  pb.innerHTML = `<div style="color:#64748B;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Preventable losses</div>
+    <div class="mono" style="color:${outcome.color};font-size:30px;font-weight:700">${fmt(preventable)}</div>
+    <div style="color:#64748B;font-size:12px;margin-top:4px">per year (with better monitoring)</div>`;
+
+  const ob = document.getElementById('outcome-box');
+  ob.style.background = outcome.color+'12';
+  ob.style.border = `1px solid ${outcome.color}35`;
+  ob.innerHTML = `<div style="color:${outcome.color};font-weight:700;font-size:13px;margin-bottom:5px">→ ${outcome.label}</div>
+    <div style="color:#94A3B8;font-size:12px;line-height:1.6">${outcome.desc}</div>
+    <div style="color:#475569;font-size:11px;margin-top:6px;font-style:italic">e.g. ${outcome.ex}</div>`;
+
+  const maxW = 300;
+  const scale = 200;
+  const pLine = Math.min(preventable/scale,1)*maxW;
+
+  let chartHTML = '<div style="padding:8px 0">';
+  TIERS.forEach(t => {
+    const w = Math.min((t.lo+t.hi)/2/scale,1)*maxW;
+    chartHTML += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="color:#64748B;font-size:11px;min-width:82px;text-align:right">${t.short}</div>
+      <div style="height:28px;width:${Math.max(w,30)}px;background:${t.color}80;border-radius:4px;display:flex;align-items:center;padding:0 8px">
+        <span style="color:#F1F5F9;font-size:11px;font-weight:600;white-space:nowrap">${fmt((t.lo+t.hi)/2)}</span>
+      </div>
+      <div style="color:#64748B;font-size:11px;white-space:nowrap">${fmt(t.lo)}–${fmt(t.hi)}</div>
+    </div>`;
+  });
+  chartHTML += `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="color:#F59E0B;font-size:11px;min-width:82px;text-align:right;font-weight:700">Preventable</div>
+      <div style="position:relative;height:4px;width:${maxW}px;background:rgba(255,255,255,0.06);border-radius:2px;flex-shrink:0">
+        <div style="height:4px;width:${pLine}px;background:#F59E0B;border-radius:2px"></div>
+        <div style="position:absolute;left:${pLine}px;top:-7px;width:2px;height:18px;background:#F59E0B;border-radius:1px"></div>
+      </div>
+      <div style="color:#F59E0B;font-size:11px;font-weight:700;white-space:nowrap">${fmt(preventable)}/yr</div>
+    </div>
+    <div style="color:#475569;font-size:10px;margin-top:5px;padding-left:92px">Tiers extending beyond this point may not be proportionate</div>
+  </div></div>`;
+  document.getElementById('chart-container').innerHTML = chartHTML;
+
+  let legHTML = '';
+  TIERS.forEach(t => {
+    legHTML += `<div style="display:flex;gap:8px;align-items:flex-start">
+      <div style="width:8px;height:8px;border-radius:2px;background:${t.color};margin-top:3px;flex-shrink:0"></div>
+      <div>
+        <div style="color:#CBD5E1;font-size:12px;font-weight:600">${t.name} <span style="color:#475569;font-weight:400">(${fmt(t.lo)}–${fmt(t.hi)}/yr)</span></div>
+        <div style="color:#475569;font-size:11px">${t.desc}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('tier-legend').innerHTML = legHTML;
+}
+
+function buildSliders() {
+  const fields = [
+    { k:'stake', label:'Total economic value at stake', hint:'Annual value of the industry or system at risk', min:10, max:50000, step:10, disp: v => fmt(v)+'/yr' },
+    { k:'pct', label:'% affected per event', hint:'What fraction of total value is typically impacted', min:1, max:100, step:1, disp: v => v+'%' },
+    { k:'freq', label:'Events per year (average)', hint:'Use decimals for less frequent events (0.1 = once per decade)', min:0.05, max:5, step:0.05, disp: v => parseFloat(v).toFixed(2) },
+    { k:'prev', label:'% of losses preventable by better monitoring', hint:'Conservative estimate: what fraction could early warning actually prevent?', min:5, max:80, step:5, disp: v => v+'%' }
+  ];
+  let html = '';
+  fields.forEach(f => {
+    html += `<div style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <label style="color:#CBD5E1;font-size:13px;font-weight:500">${f.label}</label>
+        <span id="val-${f.k}" style="color:#F59E0B;font-family:monospace;font-size:13px;font-weight:700">${f.disp(estimVals[f.k])}</span>
+      </div>
+      <input type="range" min="${f.min}" max="${f.max}" step="${f.step}" value="${estimVals[f.k]}"
+        oninput="handleSlider('${f.k}',this.value)" />
+      <div style="color:#475569;font-size:11px;margin-top:3px">${f.hint}</div>
+    </div>`;
+  });
+  document.getElementById('sliders').innerHTML = html;
+}
+
+const dispFns = {
+  stake: v => fmt(v)+'/yr',
+  pct: v => v+'%',
+  freq: v => parseFloat(v).toFixed(2),
+  prev: v => v+'%'
+};
+
+function handleSlider(k, v) {
+  estimVals[k] = parseFloat(v);
+  document.getElementById('val-'+k).textContent = dispFns[k](v);
+  renderEstimator();
+}
+
+function buildCases() {
+  let html = '';
+  CASES.forEach((c,i) => {
+    const o = OUTCOMES[c.outcome];
+    html += `<div style="padding:22px;border-radius:12px;border:1px solid ${o.color}30;background:${o.color}06">
+      <div style="color:#64748B;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">${c.hazard}</div>
+      <div style="color:#F1F5F9;font-weight:700;font-size:15px;margin-bottom:14px;line-height:1.3">${c.name}</div>
+      <div class="grid2sm" style="margin-bottom:14px">
+        ${[['Value at stake',fmt(c.stake)+'/yr'],['% affected',c.pct+'%'],['Events/yr',c.freq],['% preventable',c.prev+'%']].map(([l,v])=>`
+          <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:10px">
+            <div style="color:#475569;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">${l}</div>
+            <div style="color:#F59E0B;font-family:monospace;font-size:13px;font-weight:700">${v}</div>
+          </div>`).join('')}
+      </div>
+      <div style="background:${o.color}12;border-radius:8px;padding:10px;margin-bottom:14px;border:1px solid ${o.color}25">
+        <div style="color:${o.color};font-size:12px;font-weight:600;margin-bottom:3px">→ ${o.label}</div>
+        <div style="color:#94A3B8;font-size:12px;line-height:1.5">${c.notes}</div>
+      </div>
+      <button onclick="loadCase(${i})"
+        style="width:100%;padding:10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:transparent;border:1px solid ${o.color}50;color:${o.color};transition:background 0.15s ease"
+        onmouseover="this.style.background='${o.color}18'" onmouseout="this.style.background='transparent'">
+        Load into estimator →
+      </button>
+    </div>`;
+  });
+  document.getElementById('case-cards').innerHTML = html;
+
+  let cHTML = '';
+  CONTRAST.forEach(([l,a,b]) => {
+    cHTML += `<div>
+      <div style="color:#475569;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">${l}</div>
+      <div style="color:#10B981;font-size:12px;line-height:1.5;margin-bottom:4px">Camp Fire: ${a}</div>
+      <div style="color:#6366F1;font-size:12px;line-height:1.5">Ecuador: ${b}</div>
+    </div>`;
+  });
+  document.getElementById('contrast-grid').innerHTML = cHTML;
+}
+
+function loadCase(i) {
+  const c = CASES[i];
+  estimVals = { stake:c.stake, pct:c.pct, freq:c.freq, prev:c.prev };
+  ['stake','pct','freq','prev'].forEach(k => {
+    const el = document.querySelector(`input[oninput="handleSlider('${k}',this.value)"]`);
+    if (el) el.value = estimVals[k];
+    const vEl = document.getElementById('val-'+k);
+    if (vEl) vEl.textContent = dispFns[k](estimVals[k]);
+  });
+  const banner = document.getElementById('case-banner');
+  banner.style.display = 'flex';
+  document.getElementById('case-label').innerHTML = `Loaded: <strong>${c.name}</strong> — ${c.notes}`;
+  renderEstimator();
+  showTab('estimator', document.querySelectorAll('.tab-btn')[1]);
+}
+
+function clearCase() {
+  document.getElementById('case-banner').style.display = 'none';
+}
+
+function buildPrimer() {
+  let html = '';
+  PRIMER.forEach(p => {
+    html += `<div style="padding:16px;border-radius:10px;border:1px solid ${p.color}20;background:${p.color}06">
+      <div style="color:${p.color};font-weight:700;font-size:13px;margin-bottom:3px">${p.term}</div>
+      <div style="color:#CBD5E1;font-weight:500;font-size:12px;margin-bottom:7px;font-style:italic">${p.plain}</div>
+      <div style="color:#94A3B8;font-size:12px;line-height:1.6">${p.detail}</div>
+    </div>`;
+  });
+  document.getElementById('primer-cards').innerHTML = html;
+
+  let dtHTML = '';
+  DECISION.forEach(([q,a]) => {
+    dtHTML += `<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:14px">
+      <div style="color:#F59E0B;font-size:12px;font-weight:600;margin-bottom:8px;line-height:1.4">${q}</div>
+      <div style="color:#94A3B8;font-size:11px;line-height:1.6">${a}</div>
+    </div>`;
+  });
+  document.getElementById('decision-tree').innerHTML = dtHTML;
+}
+
+// Init
+buildSteps();
+buildOutcomes();
+buildSliders();
+buildCases();
+buildPrimer();
+renderEstimator();
+</script>
+</body>
+</html>
